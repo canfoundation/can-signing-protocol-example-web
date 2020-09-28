@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Sign transaction sample</title>
+  </head>
+  <body>
+    <div>
+      <button
+        class="can-pass-login-button"
+        data-redirect-uri="http://localhost:3002/auth/cryptobadge/callback"
+        data-state="random string"
+        data-domain="https://test.canpass.me"
+        data-text="Sign in with can-pass"
+      ></button>
+
+      <a href="/auth/cryptobadge"> Login </a>
+    </div>
+
+    <script src="/can-pass-api.js"></script>
+    <script>
+      (function () {
+        const canPass = window.CanPass && window.CanPass.getInstance();
+
+        if (canPass) {
+          canPass.init({
+            clientId: '514744fe2356ecd585789ebddfecb087',
+            version: '1.0',
+            endPoint: 'https://pro.api.cryptobadge.app/can-keys-dev/graphql',
+            signTxURL: 'https://canpass.me/auth/sign-transaction',
+            logger: console,
+            store: `localStore`,
+          });
+
+          canPass.loginButton();
+        }
+      })();
+    </script>
+  </body>
+</html>
