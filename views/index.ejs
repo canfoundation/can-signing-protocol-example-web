@@ -38,6 +38,7 @@
         </div>
       </div>
       <% if (token) { %>
+      <button onclick="tranferCat()">Tranfer 1 CAT</button>
       <div class="row">
         <div class="col m8 offset-m4">
           <table>
@@ -51,7 +52,7 @@
             <tbody>
               <tr>
                 <td>access_token</td>
-                <td><%= token.access_token %></td>
+                <td id="access_token"><%= token.access_token %></td>
               </tr>
               <tr>
                 <td>token_type</td>
@@ -79,22 +80,55 @@
     <script src="/can-pass-api.js"></script>
 
     <script>
+      const canPass = window.CanPass && window.CanPass.getInstance();
+      const access_token = document.getElementById("access_token")?.textContent;
       (function () {
-        const canPass = window.CanPass && window.CanPass.getInstance();
-
         if (canPass) {
           canPass.init({
             clientId: '514744fe2356ecd585789ebddfecb087',
             version: '1.0',
-            endPoint: 'https://pro.api.cryptobadge.app/can-keys-dev/graphql',
-            signTxURL: 'https://canpass.me/auth/sign-transaction',
+            endPoint: 'https://dev.api.cryptobadge.app/can-keys-test/graphql',
+            signTxURL: 'https://test.canpass.me/auth/sign-transaction',
             logger: console,
             store: `localStore`,
           });
-
+          canPass.setCredentials({
+            accessToken: access_token || ""
+          });
           canPass.loginButton();
         }
       })();
+
+      function tranferCat() {
+        
+        const tx = {
+          "actions": [
+            {
+              "account": "eosio.token",
+              "name": "transfer",
+              "authorization": [
+                {
+                  "actor": "kgohocpz2p3u",
+                  "permission": "active"
+                }
+              ],
+              "data": {
+                "memo": "Transfer CAT 1",
+                "from": "kgohocpz2p3u",
+                "to": "zj1e5k5q2wrm",
+                "quantity": "1.0000 CAT"
+              }
+            }
+          ]
+        }
+        canPass.signTx(tx, "RequestSignTxOptions", (error, tx) => {
+          if(error) {
+            console.log("Fail", error);
+          } else {
+            console.log("Sign Success", tx);
+          }   
+        })
+      }
     </script>
   </body>
 </html>
