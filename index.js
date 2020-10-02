@@ -1,68 +1,48 @@
 const express = require('express');
-require('https').globalAgent.options.rejectUnauthorized = false;
-const passport = require('passport');
 const session = require('cookie-session');
-const OAuth2Strategy = require('passport-oauth2').Strategy;
+const CANpass = require('can-pass-verify').default;
+
+const PORT = 3002;
 const app = express();
 
-
 app.set('view engine', 'ejs');
-app.use(session({name: '3rd-party', keys: ['key'], maxAge: 24 * 60 * 60 * 1000}));
-app.use(passport.initialize());
-app.use(passport.session());
+
+app.use(session({ name: 'sign-transaction-sample', keys: ['key'], maxAge: 24 * 60 * 60 * 1000 }));
 app.use(express.static('lib'));
 
-app.get('/', (req, res) => res.render('index', { user: req.session.passport.user }));
-
-app.post('/logout', (req, res) => {
-  delete req.session.passport;
-  res.redirect('/');
-});
+app.get('/', (req, res) => res.render('index', { token: req.session.token }));
 
 // CANpass integration
-const clientID = 'd7e3d4b694728340a108a05379142213';
-const clientSecret = 'YOUR_CLIENT_SECRET';
-const callbackURL = 'http://localhost:3000/auth/callback';
+const client_id = '514744fe2356ecd585789ebddfecb087';
+const client_secret = '6b88c8e215cb1c62deb07c7e176fbb1b66799705246db502127d2dd92cc7bff5';
+const redirect_uri = `http://localhost:${PORT}/auth/cryptobadge/callback`;
 
-passport.use(new OAuth2Strategy({
-  authorizationURL: 'https://test.canpass.me/oauth2/authorize',
-  tokenURL: 'https://test.canpass.me/oauth2/token',
-  state: true,
-  clientID,
-  callbackURL
-}, (accessToken, refreshToken, params, profile, done) => {
-    console.log('accessToken', accessToken);
-  request.post({
-    url: 'https://dev.api.cryptobadge.app/m1/graphql',
-    headers: {
-      'Authorization': `Bearer ${accessToken}`
+CANpass.config({
+  canPassApi: 'https://test.canpass.me/oauth2',
+  fetch: require('node-fetch'),
+});
+
+app.get('/auth/cryptobadge/callback', (req, res) => {
+  CANpass.getToken(
+    {
+      code: req.query.code,
+      redirect_uri,
     },
-    json: {
-      query: `query {
-        me {
-          id
-          name
-          email
-          path
-          resourceUrl
-        }
-      }`
-    }
-  }, (error, response, {data: {me}}) => {
-    if (error || response.statusCode !== 200) {
-        console.log('error', error);
-      return done(error);
-    }
-    done(null, me);
+    {
+      client_id,
+      client_secret,
+    },
+  ).then((token) => {
+    console.log('-- retrieve token:', token);
+    req.session.token = token;
+    res.redirect('/');
   });
-}));
-passport.serializeUser((user, done) => done(null, user));
-passport.deserializeUser((user, done) => done(null, user));
+});
 
-app.get('/auth/login', passport.authenticate('oauth2', {scope: ['email']}));
-app.get('/auth/callback', passport.authenticate('oauth2'), (req, res) => res.redirect('/home'));
-
-const PORT = 3000;
+app.get('/logout', (req, res) => {
+  delete req.session.token;
+  res.redirect('/');
+});
 
 app.listen(PORT, () => {
   console.info(`application is ready on: http://localhost:${PORT}`);
