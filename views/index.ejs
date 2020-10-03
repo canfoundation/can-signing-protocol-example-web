@@ -40,50 +40,85 @@
 
       <% if (token) { %>
       <div class="row">
-        <div class="col m8 offset-m4">
-          <table>
-            <thead>
-              <tr>
-                <th>name</th>
-                <th>value</th>
-              </tr>
-            </thead>
-
-            <tbody>
-              <tr>
-                <td>access_token</td>
-                <td id="access_token"><%= token.access_token %></td>
-              </tr>
-              <tr>
-                <td>token_type</td>
-                <td><%= token.token_type %></td>
-              </tr>
-              <tr>
-                <td>expires_in</td>
-                <td><%= token.expires_in %></td>
-              </tr>
-              <tr>
-                <td>refresh_token</td>
-                <td><%= token.refresh_token %></td>
-              </tr>
-              <tr>
-                <td>scope</td>
-                <td><%= token.scope %></td>
-              </tr>
-            </tbody>
-          </table>
+        <div class="col s7 push-s5">
+          <div class="card blue-grey darken-1">
+            <div class="card-content white-text">
+              <span class="card-title">Token Info</span>
+              <table class="highlight">
+                <thead>
+                  <tr>
+                    <th>name</th>
+                    <th>value</th>
+                  </tr>
+                </thead>
+    
+                <tbody>
+                  <tr>
+                    <td>access_token</td>
+                    <td id="access_token"><%= token.access_token %></td>
+                  </tr>
+                  <tr>
+                    <td>token_type</td>
+                    <td><%= token.token_type %></td>
+                  </tr>
+                  <tr>
+                    <td>expires_in</td>
+                    <td><%= token.expires_in %></td>
+                  </tr>
+                  <tr>
+                    <td>refresh_token</td>
+                    <td><%= token.refresh_token %></td>
+                  </tr>
+                  <tr>
+                    <td>scope</td>
+                    <td><%= token.scope %></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+        <div class="col s5 pull-s7">
+          <div class="row">
+            <div class="col s12">
+              <div class="card blue lighten-5">
+                <div class="card-content">
+                  <span class="card-title">Transfer CAT Example</span>
+                  <form> 
+                    <div class="row">
+                      <div class="input-field">
+                        <input id="your-can-account" type="text" class="validate">
+                        <label for="your-can-account">Input Your CAN Account</label>
+                      </div> 
+                    </div>
+                    <div class="row">
+                      <div class="input-field">
+                        <input id="to-can-account" type="text" class="validate">
+                        <label for="to-can-account">To CAN Account</label>
+                      </div>          
+                    </div>
+                    <div class="row">
+                      <div class="input-field">
+                        <input id="quantity" type="number" step="0.0001" class="validate">
+                        <label for="quantity">Amount of CAT</label>
+                      </div>
+                    </div>
+                    <div class="row">
+                      <div class="col m2">
+                        <button class="btn waves-effect waves-light" type="button" onclick="transferCat()">Transfer CAT</button>
+                      </div>
+                    </div>
+                  </form>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
-
-      <div class="row">
-        <div class="col m2">
-          <button class="btn waves-effect waves-light" onclick="tranferCat()">Tranfer 1 CAT</button>
-        </div>
-
-        <div class="col m10">
+        <!-- <div class="col m10">
           <pre id="id-transaction-data"></pre>
-        </div>
-      </div>
+        </div> -->
+
 
       <% } %>
     </div>
@@ -92,7 +127,7 @@
 
     <script>
       const canPass = window.CanPass && window.CanPass.getInstance();
-      const accessToken = '<%= token.access_token %>';
+      const accessToken = document.getElementById('access_token')?.textContent;
       canPass.init({
         clientId: '514744fe2356ecd585789ebddfecb087',
         version: '1.0',
@@ -117,31 +152,38 @@
       // after loggin successfully, the access-token need to be set to canPass instance
       // without this access-token, the can-pass instance can not make a sign transaction request
       canPass.setCredentials({ accessToken });
-
-      const tx = {
-        actions: [
-          {
-            account: 'eosio.token',
-            name: 'transfer',
-            authorization: [
-              {
-                actor: 'kgohocpz2p3u',
-                permission: 'active',
+      
+      // if(document.getElementById('id-transaction-data'))
+      // {
+      //   document.getElementById('id-transaction-data').innerText = JSON.stringify(transferCatTx, null, 2);
+      // }
+      function transferCat() {
+        const from = document.getElementById('your-can-account').value;
+        const to = document.getElementById('to-can-account').value;
+        const quantity = document.getElementById('quantity').value;
+        const transferCatTx = {
+          actions: [
+            {
+              account: 'eosio.token',
+              name: 'transfer',
+              authorization: [
+                {
+                  actor: from,
+                  permission: 'active',
+                },
+              ],
+              data: {
+                memo: 'Transfer CAT',
+                from, // ex 'kgohocpz2p3u',
+                to, // ex 'zj1e5k5q2wrm',
+                quantity: `${quantity} CAT` // ex '1.0000 CAT',
               },
-            ],
-            data: {
-              memo: 'Transfer CAT 1',
-              from: 'kgohocpz2p3u',
-              to: 'zj1e5k5q2wrm',
-              quantity: '1.0000 CAT',
             },
-          },
-        ],
-      };
-
-      document.getElementById('id-transaction-data').innerText = JSON.stringify(tx, null, 2);
-
-      function tranferCat() {
+          ],
+        };
+        requestSignTx(transferCatTx);
+      }
+      function requestSignTx(tx) {
         canPass.signTx(tx, 'RequestSignTxOptions', (error, tx) => {
           if (error) {
             console.log('Fail', error);
