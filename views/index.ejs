@@ -104,8 +104,11 @@
                       </div>
                     </div>
                     <div class="row">
-                      <div class="col m2">
+                      <div class="col s6">
                         <button class="btn waves-effect waves-light" type="button" onclick="transferCat()">Transfer CAT</button>
+                      </div>
+                      <div class="col s6">
+                        <button class="btn waves-effect waves-light" type="button" onclick="requestSignTxServerSide()">Server Side</button>
                       </div>
                     </div>
                   </form>
@@ -157,6 +160,11 @@
       // {
       //   document.getElementById('id-transaction-data').innerText = JSON.stringify(transferCatTx, null, 2);
       // }
+
+      /**
+         * Transfer Cat transaction example
+         * This function get data from form data and request sign transaction.
+         */
       function transferCat() {
         const from = document.getElementById('your-can-account').value;
         const to = document.getElementById('to-can-account').value;
@@ -183,14 +191,42 @@
         };
         requestSignTx(transferCatTx);
       }
+
+      /**
+         * Call signTx of can-pass-js sdk to request sign transaction
+         * This is CIF style
+      */
       function requestSignTx(tx) {
         canPass.signTx(tx, 'RequestSignTxOptions', (error, tx) => {
-          if (error) {
+          if (error) { //When sign transaction have errors, do somthing here
             console.log('Fail', error);
-          } else {
+          } else { // When success
             console.log('Sign Success', tx);
           }
         });
+      }
+
+      /**
+         * Another way to call sign transaction
+         * Sending a post to server and call can-key API
+         * Redirect style
+         * A response from server will be an redirect url to sign transaction
+      */
+      async function requestSignTxServerSide() {
+        const from = document.getElementById('your-can-account').value;
+        const to = document.getElementById('to-can-account').value;
+        const quantity = document.getElementById('quantity').value;
+        transferCatTx = JSON.stringify({ from, to, quantity });
+        const response = await fetch('http://localhost:3002/transferCat', {
+          method: 'POST',     
+          headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
+          },
+          body: transferCatTx
+        });
+        const redirect = await response.json();
+        window.location.replace(redirect);
       }
     </script>
   </body>
