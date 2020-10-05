@@ -70,6 +70,7 @@ In Home page you will see a form Transfer CAT Example
 - Input your CAN account
 - Input CAN account's receiver
 - Input quantity - Amount of CAT you want to transfer
+- Redirect URL - a callback URL when sign transaction Server Side (use for option 2)
 
 We have 2 option to sign a transaction.
 
@@ -94,13 +95,28 @@ function requestSignTx(tx) {
   });
 }
 ```
-**Option 1**: Click on button 'Server Side' (Redirect style)
+**Option 2**: Click on button 'Server Side' (Redirect style)
 
 Request sign transaction in server side by call can-keys api
 
 Get input values from client
 
 Call a mutation graphql to get ```headerLocation``` and redirect to ```headerLocation```
+
+After sign a transaction, redirect to Redirect URL (input in client side)
+
+I have write an Redirect URL input example http://localhost:3002/sign-tx-callback
+
+```javascript
+app.get('/sign-tx-callback', (req, res) => {
+  const trx = req.query.trx;
+  if(trx) {
+    console.log('Sign Transaction Success!');
+    res.redirect('/');
+  }
+});
+```
+You can get transaction info in ```req.query```
 
 
 
