@@ -3,7 +3,7 @@
   "private": "true",
   "version": "0.1.0",
   "scripts": {
-    "start": "nodemon index.js",
+    "start": "EXPRESS_PORT=3002 nodemon index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",

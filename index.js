@@ -46,6 +46,14 @@ app.get('/auth/cryptobadge/callback', (req, res) => {
   });
 });
 
+app.get('/sign-tx-callback', (req, res) => {
+  const trx = req.query.trx;
+  if(trx) {
+    console.log('Sign Transaction Success!');
+    res.redirect('/');
+  }
+});
+
 app.get('/logout', (req, res) => {
   delete req.session.token;
   res.redirect('/');
@@ -57,7 +65,7 @@ app.get('/logout', (req, res) => {
   * redirectUrl is where you go back when you signed a transaction
 */
 app.post('/transferCat', (req, res) => {
-  const { from, to, quantity } = req.body;
+  const { from, to, quantity, redirectUrl } = req.body;
   const operation = {
     query: gql`
       mutation {
@@ -76,7 +84,7 @@ app.post('/transferCat', (req, res) => {
               }
             }
           }
-          redirectUrl: "http://localhost:3002/"
+          redirectUrl: "${redirectUrl}"
           }
         ) {
           headerLocation

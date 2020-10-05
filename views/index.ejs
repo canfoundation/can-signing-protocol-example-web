@@ -104,6 +104,12 @@
                       </div>
                     </div>
                     <div class="row">
+                      <div class="input-field">
+                        <input id="redirect-url" type="text">
+                        <label for="redirect-url">Redirect URL</label>
+                      </div>
+                    </div>
+                    <div class="row">
                       <div class="col s6">
                         <button class="btn waves-effect waves-light" type="button" onclick="transferCat()">Transfer CAT</button>
                       </div>
@@ -216,7 +222,8 @@
         const from = document.getElementById('your-can-account').value;
         const to = document.getElementById('to-can-account').value;
         const quantity = document.getElementById('quantity').value;
-        transferCatTx = JSON.stringify({ from, to, quantity });
+        const redirectUrl = document.getElementById('redirect-url').value;
+        transferCatTx = JSON.stringify({ from, to, quantity, redirectUrl });
         const response = await fetch('http://localhost:3002/transferCat', {
           method: 'POST',     
           headers: {
