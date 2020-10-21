@@ -3,6 +3,7 @@
   "private": "true",
   "version": "0.1.0",
   "scripts": {
+    "docs": "doctoc --title '**Table of content**' README.md",
     "start": "EXPRESS_PORT=3002 nodemon index.js",
     "test": "jest"
   },
@@ -21,7 +22,21 @@
     "node-fetch": "^2.6.1"
   },
   "devDependencies": {
+    "doctoc": "^1.4.0",
+    "husky": "^4.3.0",
     "jest": "^26.6.0",
+    "lint-staged": "^10.4.2",
     "nodemon": "^2.0.4"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged"
+    }
+  },
+  "lint-staged": {
+    "*.{ts,js,css}": "prettier --write",
+    "*.md": [
+      "doctoc --title '**Table of content**'"
+    ]
   }
 }

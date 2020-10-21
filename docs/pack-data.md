@@ -1,3 +1,13 @@
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+**Table of content**
+
+- [Pack action data](#pack-action-data)
+  - [Make the first command output](#make-the-first-command-output)
+  - [Make the second command output](#make-the-second-command-output)
+
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->
+
 # Pack action data
 
 TODO explain how to use `cif-js`
@@ -18,10 +28,10 @@ cleos -u https://api.canfoundation.io convert pack_action_data impactcltv.t tran
 cleos -u https://api.canfoundation.io push action governance execcode '["impactcltv.c", "sdew2342dsw2", 8, [["transfer", "80c0ce116564aa7470a5b57b59fc4c190a00000000000000004943560000000000"]]]' -p sdew2342dsw2
 ```
 
-To make a `pack_action_data`, we are going to need `eosjs`. I wrote an utils file for this: [PackActionData.js](./lib/PackActionData.js).
-Check out this [packActionData.test.js](./__tests__/packActionData.test.js) file for the sample.
+To make a `pack_action_data`, we are going to need `eosjs`. I wrote an utils file for this: [PackActionData.js](../lib/PackActionData.js).
+Check out this [packActionData.test.js](../__tests__/packActionData.test.js) file for the sample.
 
-## Make the first command output `80c0ce116564aa743c00000000000000004943560000000000`.
+## Make the first command output
 
 ```javascript
 const packActionData = new PackActionData();
@@ -48,21 +58,21 @@ Then you can push this action to the can-pass APIs.
       }
     ],
     "data": {
-      "community_account", "impactcltv.c",
-      "exec_account", "sdew2342dsw2",
-      "code_id", 8,
+      "community_account": "impactcltv.c",
+      "exec_account": "sdew2342dsw2",
+      "code_id": 8,
       "code_actions": [
         {
           "code_action": "issue",
           "packed_params": "80c0ce116564aa743c00000000000000004943560000000000"
         }
-      ],
+      ]
     }
   }
 ]
 ```
 
-## Make the second command output `80c0ce116564aa743c00000000000000004943560000000000`.
+## Make the second command output
 
 ```javascript
 const packActionData = new PackActionData();
