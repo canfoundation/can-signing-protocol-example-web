@@ -1,3 +1,5 @@
+[![Gitpod ready-to-code](https://img.shields.io/badge/Gitpod-ready--to--code-blue?logo=gitpod)](https://gitpod.io/#https://github.com/canfoundation/can-signing-protocol-example-web)
+
 # Can Signing Protocol Example Web
 
 This example is written in [Express](https://expressjs.com/) and demonstrates 'Signing protocal example' for a web app.
