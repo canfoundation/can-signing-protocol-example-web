@@ -8,7 +8,8 @@ const fetch = require('node-fetch');
 const gql = require('graphql-tag');
 const uri = 'https://prod.api.cryptobadge.app/can-keys/graphql';
 const link = createHttpLink({ uri, fetch });
-
+const uriCB = 'https://api.cryptobadge.app/graphql';
+const linkCB = createHttpLink({ uri: uriCB, fetch });
 const PORT = 3002;
 const app = express();
 app.use(express.json());
@@ -106,6 +107,28 @@ app.post('/transferCat', (req, res) => {
       res.json(JSON.stringify(error, null, 2));
   })
   
+})
+app.get('/getMyCanAccount', (req, res) => {
+  const operation = {
+    query: gql`
+      query {
+        me {
+          canAccounts
+        }
+      }
+    `,
+    context: { 
+      headers: {
+          "Authorization": `Bearer ${req.session.token.access_token}`
+      }
+    },
+  };
+  makePromise(execute(linkCB, operation))
+    .then(data => {
+      res.json(data.data.me.canAccounts[0]);
+  }).catch(error => {
+      res.json(JSON.stringify(error, null, 2));
+  })
 })
 
 app.listen(PORT, () => {
