@@ -15,6 +15,25 @@
 
     <!-- Compiled and minified JavaScript -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+    <style>
+      .form-container {
+        position: absolute;
+      }
+      pre {
+      white-space: pre-wrap;
+      overflow-wrap: break-word;
+      margin: 0;
+      position: relative;
+      }
+      .history-container {
+        background-color: rgba(31, 38, 42, 0.2);
+        padding: 4px 4px 19px 16px;
+        color: white;
+        position: relative;
+        height: 300px;
+        overflow-y: auto;
+      }
+    </style>
   </head>
 
   <body>
@@ -40,113 +59,142 @@
 
       <% if (token) { %>
       <div class="row">
-        <div class="col s7 push-s5">
-          <div class="card blue-grey darken-1">
-            <div class="card-content white-text">
-              <span class="card-title">Token Info</span>
-              <table class="highlight">
-                <thead>
-                  <tr>
-                    <th>name</th>
-                    <th>value</th>
-                  </tr>
-                </thead>
-    
-                <tbody>
-                  <tr>
-                    <td>access_token</td>
-                    <td id="access_token"><%= token.access_token %></td>
-                  </tr>
-                  <tr>
-                    <td>token_type</td>
-                    <td><%= token.token_type %></td>
-                  </tr>
-                  <tr>
-                    <td>expires_in</td>
-                    <td><%= token.expires_in %></td>
-                  </tr>
-                  <tr>
-                    <td>refresh_token</td>
-                    <td><%= token.refresh_token %></td>
-                  </tr>
-                  <tr>
-                    <td>scope</td>
-                    <td><%= token.scope %></td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
-          </div>
-        </div>
-        <div class="col s5 pull-s7">
-          <div class="row">
-            <div class="col s12">
-              <div class="card blue lighten-5">
-                <div class="card-content">
-                  <span class="card-title">Transfer CAT Example</span>
-                  <form> 
-                    <div class="row">
-                      <div class="input-field">
-                        <input placeholder="Your CAN Account" id="your-can-account" type="text" class="validate">
-                        <label for="your-can-account">Your CAN Account</label>
-                      </div> 
-                    </div>
-                    <div class="row">
-                      <div class="input-field">
-                        <input id="to-can-account" type="text" class="validate">
-                        <label for="to-can-account">To CAN Account</label>
-                      </div>          
-                    </div>
-                    <div class="row">
-                      <div class="input-field">
-                        <input id="quantity" type="number" step="0.0001" class="validate">
-                        <label for="quantity">Amount of CAT</label>
-                      </div>
-                    </div>
-                    <div class="row">
-                      <div class="input-field">
-                        <input id="redirect-url" type="text">
-                        <label for="redirect-url">Redirect URL</label>
-                      </div>
-                    </div>
-                    <div class="row">
-                      <div class="col s6">
-                        <button class="btn waves-effect waves-light" type="button" onclick="transferCat()">Transfer CAT</button>
-                      </div>
-                      <div class="col s6">
-                        <button class="btn waves-effect waves-light" type="button" onclick="requestSignTxServerSide()">Server Side</button>
-                      </div>
-                    </div>
-                  </form>
-                </div>
+          <div class="col s12">
+            <div class="card blue-grey darken-1">
+              <div class="card-content white-text">
+                <span class="card-title">Token Info</span>
+                <table class="highlight">
+                  <thead>
+                    <tr>
+                      <th>name</th>
+                      <th>value</th>
+                    </tr>
+                  </thead>
+      
+                  <tbody>
+                    <tr>
+                      <td>access_token</td>
+                      <td id="access_token"><%= token.access_token %></td>
+                    </tr>
+                    <tr>
+                      <td>token_type</td>
+                      <td><%= token.token_type %></td>
+                    </tr>
+                    <tr>
+                      <td>expires_in</td>
+                      <td><%= token.expires_in %></td>
+                    </tr>
+                    <tr>
+                      <td>refresh_token</td>
+                      <td><%= token.refresh_token %></td>
+                    </tr>
+                    <tr>
+                      <td>scope</td>
+                      <td><%= token.scope %></td>
+                    </tr>
+                  </tbody>
+                </table>
               </div>
-              <div class="card blue lighten-5">
-                <div class="card-content">
-                  <span class="card-title">Check Balance</span>
-                  <form> 
-                    <div class="row">
-                      <div class="input-field">
-                        <input placeholder="Your CAN Account" id="account-check-balance" type="text">
-                        <label for="account-check-balance">Your CAN Account</label>
-                      </div> 
-                    </div>
-                    <div class="row">
-                      <div class="col s6">
-                        Account Balance: 
-                        <span id="account-balance"></span>
-                      </div>
-                      <div class="col s6">
-                        <button class="btn waves-effect waves-light" type="button" onclick="checkBalance()">Check</button>
-                      </div>
-                    </div>
-                  <form>
-                <div>
-              <div>
-                  
-
             </div>
           </div>
-        </div>
+          <div class="col s6">
+            <div class="card blue lighten-5">
+              <div class="card-content">
+                <span class="card-title">Transfer CAT Example</span>
+                <form> 
+                  <div class="row">
+                    <div class="input-field">
+                      <input placeholder="Your CAN Account" id="your-can-account" type="text" class="validate">
+                      <label for="your-can-account">Your CAN Account</label>
+                    </div> 
+                  </div>
+                  <div class="row">
+                    <div class="input-field">
+                      <input id="to-can-account" type="text" class="validate">
+                      <label for="to-can-account">To CAN Account</label>
+                    </div>          
+                  </div>
+                  <div class="row">
+                    <div class="input-field">
+                      <input id="quantity" type="number" step="0.0001" class="validate">
+                      <label for="quantity">Amount of CAT</label>
+                    </div>
+                  </div>
+                  <div class="row">
+                    <div class="input-field">
+                      <input id="redirect-url" type="text">
+                      <label for="redirect-url">Redirect URL</label>
+                    </div>
+                  </div>
+                  <div class="row">
+                    <div class="col s6">
+                      <button class="btn waves-effect waves-light" type="button" onclick="transferCat()">Transfer CAT</button>
+                    </div>
+                    <div class="col s6">
+                      <button class="btn waves-effect waves-light" type="button" onclick="getTransferHistory()">Server Side</button>
+                    </div>
+                  </div>
+                </form>
+              </div>
+            </div>
+          </div>
+          <div class="col s6">
+            <div class="card blue lighten-5">
+              <div class="card-content">
+                <span class="card-title">Check Balance</span>
+                <form> 
+                  <div class="row">
+                    <div class="input-field">
+                      <input placeholder="Your CAN Account" id="account-check-balance" type="text">
+                      <label for="account-check-balance">Your CAN Account</label>
+                    </div> 
+                  </div>
+                  <div class="row">
+                    <div class="col s6">
+                      Account Balance: 
+                      <span id="account-balance"></span>
+                    </div>
+                    <div class="col s6">
+                      <button class="btn waves-effect waves-light" type="button" onclick="checkBalance()">Check</button>
+                    </div>
+                  </div>
+                <form>
+              </div>
+            </div>
+          </div>
+          <div class="col s12">
+            <div class="card blue-grey darken-1">
+              <div class="card-content white-text">
+                <span class="card-title">Transfer History</span>
+                <form class="col s12 form-container" >
+                  <div class="row">
+                    <div class="input-field col s4">
+                      <input placeholder="CAN Account " id="account" type="text" class="validate">
+                      <label for="account">CAN Account </label>
+                    </div>
+                    <div class="input-field col s4">
+                      <input id="code" type="text" class="validate">
+                      <label for="code">Code</label>
+                    </div>
+                    <div class="input-field col s4">
+                      <input id="symbol" type="text" class="validate">
+                      <label for="symbol">Symbol</label>
+                    </div>
+                  </div>
+                <div class="row">
+                  <div class="col s12 right-align">
+                    <button class="btn waves-effect waves-light" type="button" onclick="getTransferHistory()">Get History</button>
+                  </div>
+                </div>
+                <div class="row history-container">
+                    <pre id="transfer-history">
+                    </pre>
+                </div>
+                </form>
+                
+              </div>
+            </div>
+          </div>
       </div>
       <% } %>
     </div>
@@ -197,7 +245,8 @@
       function transferCat() {
         const from = document.getElementById('your-can-account').value;
         const to = document.getElementById('to-can-account').value;
-        const quantity = document.getElementById('quantity').value;
+        let quantity = document.getElementById('quantity').value;
+        quantity = parseFloat(quantity).toFixed(4);
         const transferCatTx = {
           actions: [
             {
@@ -246,7 +295,8 @@
       async function requestSignTxServerSide() {
         const from = document.getElementById('your-can-account').value;
         const to = document.getElementById('to-can-account').value;
-        const quantity = document.getElementById('quantity').value;
+        let quantity = document.getElementById('quantity').value;
+        quantity = parseFloat(quantity).toFixed(4);
         const redirectUrl = document.getElementById('redirect-url').value;
         transferCatTx = JSON.stringify({ from, to, quantity, redirectUrl });
         const response = await fetch('http://localhost:3002/transferCat', {
@@ -274,6 +324,16 @@
         } else {
           alert("Not found!");
         }
+      }
+
+      async function getTransferHistory() {
+        const account = document.getElementById('account').value;
+        const code = document.getElementById('code').value;
+        const symbol = document.getElementById('symbol').value;
+        const URLParams = account ? new URLSearchParams({code, symbol, account}) : new URLSearchParams({ code, symbol});
+        const response = await fetch('https://explorer.canfoundation.io/v2/history/get_transfer?' + URLParams);
+        const body = await response.json();
+        document.getElementById('transfer-history').innerText = JSON.stringify(body || [], null, 4);
       }
     </script>
   </body>
