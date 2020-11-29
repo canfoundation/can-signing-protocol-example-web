@@ -26,9 +26,8 @@
       position: relative;
       }
       .history-container {
-        background-color: rgba(31, 38, 42, 0.2);
         padding: 4px 4px 19px 16px;
-        color: white;
+        color: #fff91f;
         position: relative;
         height: 300px;
         overflow-y: auto;
@@ -187,8 +186,20 @@
                   </div>
                 </div>
                 <div class="row history-container">
-                    <pre id="transfer-history">
-                    </pre>
+                  <table class="striped" id="tranferTable">
+                    <thead>
+                      <tr>
+                          <th>No</th>
+                          <th>Sender</th>
+                          <th>Receiver</th>
+                          <th>Amount</th>
+                          <th>Date</th>
+                      </tr>
+                    </thead>
+                    <tbody id="body-history">
+                      <tr></tr>
+                    </tbody>
+                  </table>
                 </div>
                 </form>
                 
@@ -333,7 +344,30 @@
         const URLParams = account ? new URLSearchParams({code, symbol, account}) : new URLSearchParams({ code, symbol});
         const response = await fetch('https://explorer.canfoundation.io/v2/history/get_transfer?' + URLParams);
         const body = await response.json();
-        document.getElementById('transfer-history').innerText = JSON.stringify(body || [], null, 4);
+        addHistoryToTable(body.simple_actions);
+      }
+
+      function addHistoryToTable(historyData) {
+        const table = document.getElementById("tranferTable");
+        const body = document.getElementById('body-history');
+        const rows = body.rows.length;
+        for (let i = rows - 1 ; i > 0; i--) {
+          table.deleteRow(i);
+        }
+        historyData.forEach((history, index) => {
+
+          const row = table.insertRow(index+1);
+          let cell0 = row.insertCell(0);
+          let cell1 = row.insertCell(1);
+          let cell2 = row.insertCell(2);
+          let cell3 = row.insertCell(3);
+          let cell4 = row.insertCell(4);
+          cell0.innerHTML = index;
+          cell1.innerHTML = history.data.from;
+          cell2.innerHTML = history.data.to;
+          cell3.innerHTML = history.data.amount;
+          cell4.innerHTML = new Date(history.timestamp);
+        });
       }
     </script>
   </body>
