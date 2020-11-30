@@ -19,6 +19,7 @@ app.use(session({ name: 'sign-transaction-sample', keys: ['key'], maxAge: 24 * 6
 app.use(express.static('lib'));
 
 app.get('/', (req, res) => res.render('index', { token: req.session.token }));
+app.get('/tranfer-history', (req, res) => res.render('transferHistory', { token: req.session.token }));
 
 // CANpass integration
 const client_id = 'ba1f6c8c4e30deba32ab1c415029e5db'; // Replace YOUR_CLIENT_ID here
