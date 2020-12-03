@@ -39,8 +39,8 @@
       </div>
 
       <% if (token) { %>
-      <div class="row">
-          <div class="col s12">
+        <div class="row">
+          <div class="col s7 push-s5">
             <div class="card blue-grey darken-1">
               <div class="card-content white-text">
                 <span class="card-title">Token Info</span>
@@ -78,78 +78,67 @@
               </div>
             </div>
           </div>
-          <div class="col s6">
-            <div class="card blue lighten-5">
-              <div class="card-content">
-                <span class="card-title">Transfer CAT Example</span>
-                <form> 
-                  <div class="row">
-                    <div class="input-field">
-                      <input placeholder="Your CAN Account" id="your-can-account" type="text" class="validate">
-                      <label for="your-can-account">Your CAN Account</label>
-                    </div> 
+          <div class="col s5 pull-s7">
+            <div class="row">
+              <div class="col s12">
+                <div class="card blue lighten-5">
+                  <div class="card-content">
+                    <span class="card-title">Transfer CAT Example</span>
+                    <form> 
+                      <div class="row">
+                        <div class="input-field">
+                          <input placeholder="Your CAN Account" id="your-can-account" type="text" class="validate">
+                          <label for="your-can-account">Input Your CAN Account</label>
+                        </div> 
+                      </div>
+                      <div class="row">
+                        <div class="input-field">
+                          <input id="to-can-account" type="text" class="validate">
+                          <label for="to-can-account">To CAN Account</label>
+                        </div>          
+                      </div>
+                      <div class="row">
+                        <div class="input-field">
+                          <input id="quantity" type="number" step="0.0001" class="validate">
+                          <label for="quantity">Amount of CAT</label>
+                        </div>
+                      </div>
+                      <div class="row">
+                        <div class="input-field">
+                          <input id="redirect-url" type="text">
+                          <label for="redirect-url">Redirect URL</label>
+                        </div>
+                      </div>
+                      <div class="row">
+                        <div class="col s6">
+                          <button class="btn waves-effect waves-light" type="button" onclick="transferCat()">Transfer CAT</button>
+                        </div>
+                        <div class="col s6">
+                          <button class="btn waves-effect waves-light" type="button" onclick="requestSignTxServerSide()">Server Side</button>
+                        </div>
+                      </div>
+                    </form>
                   </div>
-                  <div class="row">
-                    <div class="input-field">
-                      <input id="to-can-account" type="text" class="validate">
-                      <label for="to-can-account">To CAN Account</label>
-                    </div>          
-                  </div>
-                  <div class="row">
-                    <div class="input-field">
-                      <input id="quantity" type="number" step="0.0001" class="validate">
-                      <label for="quantity">Amount of CAT</label>
-                    </div>
-                  </div>
-                  <div class="row">
-                    <div class="input-field">
-                      <input id="redirect-url" type="text">
-                      <label for="redirect-url">Redirect URL</label>
-                    </div>
-                  </div>
-                  <div class="row">
-                    <div class="col s6">
-                      <button class="btn waves-effect waves-light" type="button" onclick="transferCat()">Transfer CAT</button>
-                    </div>
-                    <div class="col s6">
-                      <button class="btn waves-effect waves-light" type="button" onclick="getTransferHistory()">Server Side</button>
-                    </div>
-                  </div>
-                </form>
+                </div>
               </div>
             </div>
           </div>
-          <div class="col s6">
-            <div class="card blue lighten-5">
-              <div class="card-content">
-                <span class="card-title">Check Balance</span>
-                <form> 
-                  <div class="row">
-                    <div class="input-field">
-                      <input placeholder="Your CAN Account" id="account-check-balance" type="text">
-                      <label for="account-check-balance">Your CAN Account</label>
-                    </div> 
-                  </div>
-                  <div class="row">
-                    <div class="col s6">
-                      Account Balance: 
-                      <span id="account-balance"></span>
-                    </div>
-                    <div class="col s6">
-                      <button class="btn waves-effect waves-light" type="button" onclick="checkBalance()">Check</button>
-                    </div>
-                  </div>
-                <form>
-              </div>
-            </div>
-          </div>
-      </div>
+        </div>
+
       <% } %>
     </div>
 
     <script src="/can-pass-api.js"></script>
 
     <script>
+      getMyCanAccount();
+      async function getMyCanAccount() {
+        const myCanAccountResponse = await fetch('http://localhost:3002/getMyCanAccount', {
+          method: 'GET',
+        })
+        const canAccount = await myCanAccountResponse.json();
+        document.getElementById('your-can-account').value = canAccount;
+      }
       const canPass = window.CanPass && window.CanPass.getInstance();
       const accessToken = document.getElementById('access_token')?.textContent;
       canPass.init({

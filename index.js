@@ -19,6 +19,7 @@ app.use(session({ name: 'sign-transaction-sample', keys: ['key'], maxAge: 24 * 6
 app.use(express.static('lib'));
 
 app.get('/', (req, res) => res.render('index', { token: req.session.token }));
+app.get('/check-balance', (req, res) => res.render('checkBalance', { token: req.session.token }));
 app.get('/tranfer-history', (req, res) => res.render('transferHistory', { token: req.session.token }));
 
 // CANpass integration
