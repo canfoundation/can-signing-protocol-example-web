@@ -1,105 +1,114 @@
 <!DOCTYPE html>
 
 <html>
-  <head>
-    <title>Transfer History</title>
 
-    <meta charset="utf-8" />
-    <meta name="viewport" content="minimum-scale=1, initial-scale=1, width=device-width" />
+<head>
+  <title>Transfer History</title>
 
-    <!-- Compiled and minified CSS -->
-    <link
-      rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css"
-    />
+  <meta charset="utf-8" />
+  <meta name="viewport" content="minimum-scale=1, initial-scale=1, width=device-width" />
 
-    <!-- Compiled and minified JavaScript -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
-    <style>
-      .card-container {
-        position: absolute;
-      }
-      input {
-        color: white;
-      }
-      .history-container {
-        padding: 4px 4px 19px 16px;
-        position: relative;
-        height: 300px;
-        overflow-y: auto;
-      }
-    </style>
-  </head>
+  <!-- Compiled and minified CSS -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css" />
 
-  <body>
-    <div class="container">
-      <div class="row">
-        <div class="col s12">
-          <div class="right-align">
-            <% if (!token) { %>
-            Not found, return to <a href="/">HomePage</a>
-            <% } else { %>
-            <a href="/logout">Logout</a>
-            <% } %>
+  <!-- Compiled and minified JavaScript -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+  <style>
+    .card-container {
+      position: absolute;
+    }
+
+    input {
+      color: white;
+    }
+
+    .history-container {
+      padding: 4px 4px 19px 16px;
+      position: relative;
+      height: 300px;
+      overflow-y: auto;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <div class="row">
+      <div class="col s12">
+        <div class="right-align">
+          <% if (!token) { %>
+          Not found, return to <a href="/">HomePage</a>
+          <% } else { %>
+          <a href="/logout">Logout</a>
+          <% } %>
+        </div>
+      </div>
+    </div>
+
+    <% if (token) { %>
+    <div class="row">
+      <div class="col s12">
+        <div class="card grey darken-3">
+          <div class="card-content white-text">
+            <span class="card-title">Transfer History</span>
+            <form class="col s12">
+              <div class="row">
+                <div class="input-field col s4">
+                  <input placeholder="CAN Account " id="account" type="text" class="validate">
+                  <label for="account">CAN Account </label>
+                </div>
+                <div class="input-field col s4">
+                  <input id="code" type="text" class="validate" value="eosio.token">
+                  <label for="code">Code</label>
+                </div>
+                <div class="input-field col s4">
+                  <input id="symbol" type="text" class="validate" value="CAT">
+                  <label for="symbol">Symbol</label>
+                </div>
+              </div>
+            </form>
+            <div class="row">
+              <div class="col s12 right-align">
+                <button class="btn waves-effect waves-light" type="button" onclick="getTransferHistory()">Get
+                  History</button>
+              </div>
+              <div class="row history-container">
+                <table class="striped" id="tranferTable">
+                  <thead>
+                    <tr>
+                      <th>No</th>
+                      <th>Sender</th>
+                      <th>Receiver</th>
+                      <th>Amount</th>
+                      <th>Date</th>
+                    </tr>
+                  </thead>
+                  <tbody id="body-history">
+                    <tr></tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
           </div>
         </div>
       </div>
-
-      <% if (token) { %>
-        <div class="row">
-            <div class="col s12">
-                <div class="card grey darken-3">
-                    <div class="card-content white-text">
-                      <span class="card-title">Transfer History</span>
-                      <form class="col s12">
-                        <div class="row">
-                          <div class="input-field col s4">
-                            <input placeholder="CAN Account " id="account" type="text" class="validate">
-                            <label for="account">CAN Account </label>
-                          </div>
-                          <div class="input-field col s4">
-                            <input id="code" type="text" class="validate">
-                            <label for="code">Code</label>
-                          </div>
-                          <div class="input-field col s4">
-                            <input id="symbol" type="text" class="validate">
-                            <label for="symbol">Symbol</label>
-                          </div>
-                        </div>
-                        </form>
-                      <div class="row">
-                        <div class="col s12 right-align">
-                          <button class="btn waves-effect waves-light" type="button" onclick="getTransferHistory()">Get History</button>
-                      </div>
-                      <div class="row history-container">
-                        <table class="striped" id="tranferTable">
-                            <thead>
-                            <tr>
-                                <th>No</th>
-                                <th>Sender</th>
-                                <th>Receiver</th>
-                                <th>Amount</th>
-                                <th>Date</th>
-                            </tr>
-                            </thead>
-                            <tbody id="body-history">
-                            <tr></tr>
-                            </tbody>
-                        </table>
-                    </div>
-                    </div>
-                  </div>
-            </div>
-        </div>
       <% } %>
     </div>
 
     <script>
+      getMyCanAccount();
+      async function getMyCanAccount() {
+        const myCanAccountResponse = await fetch('http://localhost:3002/getMyCanAccount', {
+          method: 'GET',
+        })
+        const canAccount = await myCanAccountResponse.json();
+        document.getElementById('account').value = canAccount;
+      }
       async function getTransferHistory() {
         const account = document.getElementById('account').value;
         const code = document.getElementById('code').value;
         const symbol = document.getElementById('symbol').value;
-        const URLParams = account ? new URLSearchParams({code, symbol, account}) : new URLSearchParams({ code, symbol});
+        const URLParams = account ? new URLSearchParams({ code, symbol, account }) : new URLSearchParams({ code, symbol });
         const response = await fetch('https://explorer.canfoundation.io/v2/history/get_transfer?' + URLParams);
         const body = await response.json();
         addHistoryToTable(body.simple_actions);
@@ -109,12 +118,12 @@
         const table = document.getElementById("tranferTable");
         const body = document.getElementById('body-history');
         const rows = body.rows.length;
-        for (let i = rows - 1 ; i > 0; i--) {
+        for (let i = rows - 1; i > 0; i--) {
           table.deleteRow(i);
         }
         historyData.forEach((history, index) => {
 
-          const row = table.insertRow(index+1);
+          const row = table.insertRow(index + 1);
           let cell0 = row.insertCell(0);
           let cell1 = row.insertCell(1);
           let cell2 = row.insertCell(2);
@@ -128,5 +137,6 @@
         });
       }
     </script>
-  </body>
+</body>
+
 </html>
