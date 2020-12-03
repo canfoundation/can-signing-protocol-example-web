@@ -39,106 +39,97 @@
       </div>
 
       <% if (token) { %>
-        <div class="row">
-          <div class="col s7 push-s5">
-            <div class="card blue-grey darken-1">
-              <div class="card-content white-text">
-                <span class="card-title">Token Info</span>
-                <table class="highlight">
-                  <thead>
-                    <tr>
-                      <th>name</th>
-                      <th>value</th>
-                    </tr>
-                  </thead>
-      
-                  <tbody>
-                    <tr>
-                      <td>access_token</td>
-                      <td id="access_token"><%= token.access_token %></td>
-                    </tr>
-                    <tr>
-                      <td>token_type</td>
-                      <td><%= token.token_type %></td>
-                    </tr>
-                    <tr>
-                      <td>expires_in</td>
-                      <td><%= token.expires_in %></td>
-                    </tr>
-                    <tr>
-                      <td>refresh_token</td>
-                      <td><%= token.refresh_token %></td>
-                    </tr>
-                    <tr>
-                      <td>scope</td>
-                      <td><%= token.scope %></td>
-                    </tr>
-                  </tbody>
-                </table>
-              </div>
+      <div class="row">
+        <div class="col s7 push-s5">
+          <div class="card blue-grey darken-1">
+            <div class="card-content white-text">
+              <span class="card-title">Token Info</span>
+              <table class="highlight">
+                <thead>
+                  <tr>
+                    <th>name</th>
+                    <th>value</th>
+                  </tr>
+                </thead>
+    
+                <tbody>
+                  <tr>
+                    <td>access_token</td>
+                    <td id="access_token"><%= token.access_token %></td>
+                  </tr>
+                  <tr>
+                    <td>token_type</td>
+                    <td><%= token.token_type %></td>
+                  </tr>
+                  <tr>
+                    <td>expires_in</td>
+                    <td><%= token.expires_in %></td>
+                  </tr>
+                  <tr>
+                    <td>refresh_token</td>
+                    <td><%= token.refresh_token %></td>
+                  </tr>
+                  <tr>
+                    <td>scope</td>
+                    <td><%= token.scope %></td>
+                  </tr>
+                </tbody>
+              </table>
             </div>
           </div>
-          <div class="col s5 pull-s7">
-            <div class="row">
-              <div class="col s12">
-                <div class="card blue lighten-5">
-                  <div class="card-content">
-                    <span class="card-title">Transfer CAT Example</span>
-                    <form> 
-                      <div class="row">
-                        <div class="input-field">
-                          <input placeholder="Your CAN Account" id="your-can-account" type="text" class="validate">
-                          <label for="your-can-account">Input Your CAN Account</label>
-                        </div> 
+        </div>
+        <div class="col s5 pull-s7">
+          <div class="row">
+            <div class="col s12">
+              <div class="card blue lighten-5">
+                <div class="card-content">
+                  <span class="card-title">Transfer CAT Example</span>
+                  <form> 
+                    <div class="row">
+                      <div class="input-field">
+                        <input placeholder="Your CAN Account" id="your-can-account" type="text" class="validate">
+                        <label for="your-can-account">Input Your CAN Account</label>
+                      </div> 
+                    </div>
+                    <div class="row">
+                      <div class="input-field">
+                        <input id="to-can-account" type="text" class="validate">
+                        <label for="to-can-account">To CAN Account</label>
+                      </div>          
+                    </div>
+                    <div class="row">
+                      <div class="input-field">
+                        <input id="quantity" type="number" step="0.0001" class="validate">
+                        <label for="quantity">Amount of CAT</label>
                       </div>
-                      <div class="row">
-                        <div class="input-field">
-                          <input id="to-can-account" type="text" class="validate">
-                          <label for="to-can-account">To CAN Account</label>
-                        </div>          
+                    </div>
+                    <div class="row">
+                      <div class="input-field">
+                        <input id="redirect-url" type="text">
+                        <label for="redirect-url">Redirect URL</label>
                       </div>
-                      <div class="row">
-                        <div class="input-field">
-                          <input id="quantity" type="number" step="0.0001" class="validate">
-                          <label for="quantity">Amount of CAT</label>
-                        </div>
+                    </div>
+                    <div class="row">
+                      <div class="col s6">
+                        <button class="btn waves-effect waves-light" type="button" onclick="transferCat()">Transfer CAT</button>
                       </div>
-                      <div class="row">
-                        <div class="input-field">
-                          <input id="redirect-url" type="text">
-                          <label for="redirect-url">Redirect URL</label>
-                        </div>
+                      <div class="col s6">
+                        <button class="btn waves-effect waves-light" type="button" onclick="requestSignTxServerSide()">Server Side</button>
                       </div>
-                      <div class="row">
-                        <div class="col s6">
-                          <button class="btn waves-effect waves-light" type="button" onclick="transferCat()">Transfer CAT</button>
-                        </div>
-                        <div class="col s6">
-                          <button class="btn waves-effect waves-light" type="button" onclick="requestSignTxServerSide()">Server Side</button>
-                        </div>
-                      </div>
-                    </form>
-                  </div>
+                    </div>
+                  </form>
                 </div>
               </div>
             </div>
           </div>
         </div>
-
+      </div>
       <% } %>
     </div>
 
     <script src="/can-pass-api.js"></script>
 
     <script>
-      getMyCanAccount();
-      async function getMyCanAccount() {
-        const myCanAccountResponse = await fetch('http://localhost:3002/getMyCanAccount', {
-          method: 'GET',
-        })
-        const canAccount = await myCanAccountResponse.json();
-        document.getElementById('your-can-account').value = canAccount;
-      }
       const canPass = window.CanPass && window.CanPass.getInstance();
       const accessToken = document.getElementById('access_token')?.textContent;
       canPass.init({
@@ -148,20 +139,16 @@
          * can-pass service to which the request signing transaction is sent
          */
         endPoint: 'https://prod.api.cryptobadge.app/can-keys/graphql',
-
         /**
          * can-pass consent page which the user puts his credential for signing the transaction
          * This should be optional.
          */
         signTxURL: 'https://canpass.me/auth/sign-transaction',
-
         logger: console,
         store: `localStore`,
       });
-
       // init loggin button
       canPass.loginButton();
-
       // after loggin successfully, the access-token need to be set to canPass instance
       // without this access-token, the can-pass instance can not make a sign transaction request
       canPass.setCredentials({ accessToken });
@@ -172,9 +159,7 @@
         })
         const canAccount = await myCanAccountResponse.json();
         document.getElementById('your-can-account').value = canAccount;
-        document.getElementById('account-check-balance').value = canAccount;
       }
-
       /**
          * Transfer Cat transaction example
          * This function get data from form data and request sign transaction.
@@ -206,7 +191,6 @@
         };
         requestSignTx(transferCatTx);
       }
-
       /**
          * Call signTx of can-pass-js sdk to request sign transaction
          * This is CIF style
@@ -214,15 +198,12 @@
       function requestSignTx(tx) {
         canPass.signTx(tx, 'RequestSignTxOptions', (error, tx) => {
           if (error) { //When sign transaction have errors, do somthing here
-            alert("Transfer Fail!");
             console.log('Fail', error);
           } else { // When success
-            alert("Transfer Success!");
             console.log('Sign Success', tx);
           }
         });
       }
-
       /**
          * Another way to call sign transaction
          * Sending a post to server and call can-key API
@@ -246,21 +227,6 @@
         });
         const redirect = await response.json();
         window.location.replace(redirect);
-      }
-
-      async function checkBalance() {
-        const account = document.getElementById('account-check-balance').value;
-        const info = JSON.stringify({"code": "eosio.token", "account": account, "symbol": "CAT"});
-        const response = await fetch('https://api.canfoundation.io/v1/chain/get_currency_balance', {
-          method: 'POST',
-          body: info
-        });
-        const balance = await response.json();
-        if(balance[0]) {
-          document.getElementById('account-balance').innerText = balance[0];
-        } else {
-          alert("Not found!");
-        }
       }
     </script>
   </body>
