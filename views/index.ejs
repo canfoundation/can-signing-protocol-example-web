@@ -1,233 +1,229 @@
 <!DOCTYPE html>
 
 <html>
-  <head>
-    <title>Sign transaction sample</title>
 
-    <meta charset="utf-8" />
-    <meta name="viewport" content="minimum-scale=1, initial-scale=1, width=device-width" />
+<head>
+  <title>Sign transaction sample</title>
 
-    <!-- Compiled and minified CSS -->
-    <link
-      rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css"
-    />
+  <meta charset="utf-8" />
+  <meta name="viewport" content="minimum-scale=1, initial-scale=1, width=device-width" />
 
-    <!-- Compiled and minified JavaScript -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
-  </head>
+  <!-- Compiled and minified CSS -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css" />
 
-  <body>
-    <div class="container">
-      <br />
-      <div class="row">
-        <div class="col s12">
-          <div class="right-align">
-            <% if (!token) { %>
-            <button
-              class="can-pass-login-button"
-              data-redirect-uri="http://localhost:3002/auth/cryptobadge/callback"
-              data-state="random string"
-              data-domain="https://canpass.me"
-              data-text="Sign in with can-pass"
-            ></button>
-            <% } else { %>
-            <a href="/logout">Logout</a>
-            <% } %>
+  <!-- Compiled and minified JavaScript -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+</head>
+
+<body>
+  <div class="container">
+    <br />
+    <div class="row">
+      <div class="col s12">
+        <div class="right-align">
+          <% if (!token) { %>
+          <button class="can-pass-login-button" data-redirect-uri="http://localhost:3002/auth/cryptobadge/callback"
+            data-state="random string" data-domain="https://canpass.me" data-text="Sign in with can-pass"></button>
+          <% } else { %>
+          <a href="/logout">Logout</a>
+          <% } %>
+        </div>
+      </div>
+    </div>
+
+    <% if (token) { %>
+    <div class="row">
+      <div class="col s7 push-s5">
+        <div class="card blue-grey darken-1">
+          <div class="card-content white-text">
+            <span class="card-title">Token Info</span>
+            <table class="highlight">
+              <thead>
+                <tr>
+                  <th>name</th>
+                  <th>value</th>
+                </tr>
+              </thead>
+
+              <tbody>
+                <tr>
+                  <td>access_token</td>
+                  <td id="access_token"><%= token.access_token %></td>
+                </tr>
+                <tr>
+                  <td>token_type</td>
+                  <td><%= token.token_type %></td>
+                </tr>
+                <tr>
+                  <td>expires_in</td>
+                  <td><%= token.expires_in %></td>
+                </tr>
+                <tr>
+                  <td>refresh_token</td>
+                  <td><%= token.refresh_token %></td>
+                </tr>
+                <tr>
+                  <td>scope</td>
+                  <td><%= token.scope %></td>
+                </tr>
+              </tbody>
+            </table>
           </div>
         </div>
       </div>
-
-      <% if (token) { %>
-      <div class="row">
-        <div class="col s7 push-s5">
-          <div class="card blue-grey darken-1">
-            <div class="card-content white-text">
-              <span class="card-title">Token Info</span>
-              <table class="highlight">
-                <thead>
-                  <tr>
-                    <th>name</th>
-                    <th>value</th>
-                  </tr>
-                </thead>
-    
-                <tbody>
-                  <tr>
-                    <td>access_token</td>
-                    <td id="access_token"><%= token.access_token %></td>
-                  </tr>
-                  <tr>
-                    <td>token_type</td>
-                    <td><%= token.token_type %></td>
-                  </tr>
-                  <tr>
-                    <td>expires_in</td>
-                    <td><%= token.expires_in %></td>
-                  </tr>
-                  <tr>
-                    <td>refresh_token</td>
-                    <td><%= token.refresh_token %></td>
-                  </tr>
-                  <tr>
-                    <td>scope</td>
-                    <td><%= token.scope %></td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
-          </div>
-        </div>
-        <div class="col s5 pull-s7">
-          <div class="row">
-            <div class="col s12">
-              <div class="card blue lighten-5">
-                <div class="card-content">
-                  <span class="card-title">Transfer CAT Example</span>
-                  <form> 
-                    <div class="row">
-                      <div class="input-field">
-                        <input placeholder="Your CAN Account" id="your-can-account" type="text" class="validate">
-                        <label for="your-can-account">Input Your CAN Account</label>
-                      </div> 
+      <div class="col s5 pull-s7">
+        <div class="row">
+          <div class="col s12">
+            <div class="card blue lighten-5">
+              <div class="card-content">
+                <span class="card-title">Transfer CAT Example</span>
+                <form>
+                  <div class="row">
+                    <div class="input-field">
+                      <input placeholder="Your CAN Account" id="your-can-account" type="text" class="validate">
+                      <label for="your-can-account">Input Your CAN Account</label>
                     </div>
-                    <div class="row">
-                      <div class="input-field">
-                        <input id="to-can-account" type="text" class="validate">
-                        <label for="to-can-account">To CAN Account</label>
-                      </div>          
+                  </div>
+                  <div class="row">
+                    <div class="input-field">
+                      <input id="to-can-account" type="text" class="validate">
+                      <label for="to-can-account">To CAN Account</label>
                     </div>
-                    <div class="row">
-                      <div class="input-field">
-                        <input id="quantity" type="number" step="0.0001" class="validate">
-                        <label for="quantity">Amount of CAT</label>
-                      </div>
+                  </div>
+                  <div class="row">
+                    <div class="input-field">
+                      <input id="quantity" type="number" step="0.0001" class="validate">
+                      <label for="quantity">Amount of CAT</label>
                     </div>
-                    <div class="row">
-                      <div class="input-field">
-                        <input id="redirect-url" type="text">
-                        <label for="redirect-url">Redirect URL</label>
-                      </div>
+                  </div>
+                  <div class="row">
+                    <div class="input-field">
+                      <input id="redirect-url" type="text">
+                      <label for="redirect-url">Redirect URL</label>
                     </div>
-                    <div class="row">
-                      <div class="col s6">
-                        <button class="btn waves-effect waves-light" type="button" onclick="transferCat()">Transfer CAT</button>
-                      </div>
-                      <div class="col s6">
-                        <button class="btn waves-effect waves-light" type="button" onclick="requestSignTxServerSide()">Server Side</button>
-                      </div>
+                  </div>
+                  <div class="row">
+                    <div class="col s6">
+                      <button class="btn waves-effect waves-light" type="button" onclick="transferCat()">Transfer
+                        CAT</button>
                     </div>
-                  </form>
-                </div>
+                    <div class="col s6">
+                      <button class="btn waves-effect waves-light" type="button"
+                        onclick="requestSignTxServerSide()">Server Side</button>
+                    </div>
+                  </div>
+                </form>
               </div>
             </div>
           </div>
         </div>
       </div>
-      <% } %>
     </div>
+    <% } %>
+  </div>
 
-    <script src="/can-pass-api.js"></script>
+  <script src="/can-pass-api.js"></script>
 
-    <script>
-      const canPass = window.CanPass && window.CanPass.getInstance();
-      const accessToken = document.getElementById('access_token')?.textContent;
-      canPass.init({
-        clientId: 'ba1f6c8c4e30deba32ab1c415029e5db',
-        version: '1.0',
-        /**
-         * can-pass service to which the request signing transaction is sent
-         */
-        endPoint: 'https://prod.api.cryptobadge.app/can-keys/graphql',
-        /**
-         * can-pass consent page which the user puts his credential for signing the transaction
-         * This should be optional.
-         */
-        signTxURL: 'https://canpass.me/auth/sign-transaction',
-        logger: console,
-        store: `localStore`,
-      });
-      // init loggin button
-      canPass.loginButton();
-      // after loggin successfully, the access-token need to be set to canPass instance
-      // without this access-token, the can-pass instance can not make a sign transaction request
-      canPass.setCredentials({ accessToken });
-      getMyCanAccount();
-      async function getMyCanAccount() {
-        const myCanAccountResponse = await fetch('http://localhost:3002/getMyCanAccount', {
-          method: 'GET',
-        })
-        const canAccount = await myCanAccountResponse.json();
-        document.getElementById('your-can-account').value = canAccount;
-      }
+  <script>
+    const canPass = window.CanPass && window.CanPass.getInstance();
+    const accessToken = document.getElementById('access_token')?.textContent;
+    canPass.init({
+      clientId: 'ba1f6c8c4e30deba32ab1c415029e5db',
+      version: '1.0',
       /**
-         * Transfer Cat transaction example
-         * This function get data from form data and request sign transaction.
-         */
-      function transferCat() {
-        const from = document.getElementById('your-can-account').value;
-        const to = document.getElementById('to-can-account').value;
-        let quantity = document.getElementById('quantity').value;
-        quantity = parseFloat(quantity).toFixed(4);
-        const transferCatTx = {
-          actions: [
-            {
-              account: 'eosio.token',
-              name: 'transfer',
-              authorization: [
-                {
-                  actor: from,
-                  permission: 'active',
-                },
-              ],
-              data: {
-                memo: 'Transfer CAT',
-                from,
-                to,
-                quantity: `${quantity} CAT`
+       * can-pass service to which the request signing transaction is sent
+       */
+      endPoint: 'https://prod.api.cryptobadge.app/can-keys/graphql',
+      /**
+       * can-pass consent page which the user puts his credential for signing the transaction
+       * This should be optional.
+       */
+      signTxURL: 'https://canpass.me/auth/sign-transaction',
+      logger: console,
+      store: `localStore`,
+    });
+    // init loggin button
+    canPass.loginButton();
+    // after loggin successfully, the access-token need to be set to canPass instance
+    // without this access-token, the can-pass instance can not make a sign transaction request
+    canPass.setCredentials({ accessToken });
+    getMyCanAccount();
+    async function getMyCanAccount() {
+      const myCanAccountResponse = await fetch('http://localhost:3002/getMyCanAccount', {
+        method: 'GET',
+      })
+      const canAccount = await myCanAccountResponse.json();
+      document.getElementById('your-can-account').value = canAccount;
+    }
+    /**
+       * Transfer Cat transaction example
+       * This function get data from form data and request sign transaction.
+       */
+    function transferCat() {
+      const from = document.getElementById('your-can-account').value;
+      const to = document.getElementById('to-can-account').value;
+      let quantity = document.getElementById('quantity').value;
+      quantity = parseFloat(quantity).toFixed(4);
+      const transferCatTx = {
+        actions: [
+          {
+            account: 'eosio.token',
+            name: 'transfer',
+            authorization: [
+              {
+                actor: from,
+                permission: 'active',
               },
+            ],
+            data: {
+              memo: 'Transfer CAT',
+              from,
+              to,
+              quantity: `${quantity} CAT`
             },
-          ],
-        };
-        requestSignTx(transferCatTx);
-      }
-      /**
-         * Call signTx of can-pass-js sdk to request sign transaction
-         * This is CIF style
-      */
-      function requestSignTx(tx) {
-        canPass.signTx(tx, 'RequestSignTxOptions', (error, tx) => {
-          if (error) { //When sign transaction have errors, do somthing here
-            console.log('Fail', error);
-          } else { // When success
-            console.log('Sign Success', tx);
-          }
-        });
-      }
-      /**
-         * Another way to call sign transaction
-         * Sending a post to server and call can-key API
-         * Redirect style
-         * A response from server will be an redirect url to sign transaction
-      */
-      async function requestSignTxServerSide() {
-        const from = document.getElementById('your-can-account').value;
-        const to = document.getElementById('to-can-account').value;
-        let quantity = document.getElementById('quantity').value;
-        quantity = parseFloat(quantity).toFixed(4);
-        const redirectUrl = document.getElementById('redirect-url').value;
-        transferCatTx = JSON.stringify({ from, to, quantity, redirectUrl });
-        const response = await fetch('http://localhost:3002/transferCat', {
-          method: 'POST',     
-          headers: {
-            'Accept': 'application/json',
-            'Content-Type': 'application/json'
           },
-          body: transferCatTx
-        });
-        const redirect = await response.json();
-        window.location.replace(redirect);
-      }
-    </script>
-  </body>
+        ],
+      };
+      requestSignTx(transferCatTx);
+    }
+    /**
+       * Call signTx of can-pass-js sdk to request sign transaction
+       * This is CIF style
+    */
+    function requestSignTx(tx) {
+      canPass.signTx(tx, 'RequestSignTxOptions', (error, tx) => {
+        if (error) { //When sign transaction have errors, do somthing here
+          console.log('Fail', error);
+        } else { // When success
+          console.log('Sign Success', tx);
+        }
+      });
+    }
+    /**
+       * Another way to call sign transaction
+       * Sending a post to server and call can-key API
+       * Redirect style
+       * A response from server will be an redirect url to sign transaction
+    */
+    async function requestSignTxServerSide() {
+      const from = document.getElementById('your-can-account').value;
+      const to = document.getElementById('to-can-account').value;
+      let quantity = document.getElementById('quantity').value;
+      quantity = parseFloat(quantity).toFixed(4);
+      const redirectUrl = document.getElementById('redirect-url').value;
+      transferCatTx = JSON.stringify({ from, to, quantity, redirectUrl });
+      const response = await fetch('http://localhost:3002/transferCat', {
+        method: 'POST',
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json'
+        },
+        body: transferCatTx
+      });
+      const redirect = await response.json();
+      window.location.replace(redirect);
+    }
+  </script>
+</body>
+
 </html>
