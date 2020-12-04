@@ -18,11 +18,16 @@ app.set('view engine', 'ejs');
 app.use(session({ name: 'sign-transaction-sample', keys: ['key'], maxAge: 24 * 60 * 60 * 1000 }));
 app.use(express.static('lib'));
 
-app.get('/', (req, res) => res.render('index', { token: req.session.token }));
-app.get('/check-balance', (req, res) => res.render('checkBalance', { token: req.session.token }));
-app.get('/transfer-history', (req, res) =>
-  res.render('transferHistory', { token: req.session.token }),
-);
+function mapSession(req) {
+  return {
+    token: req.session.token,
+    CANAccount: req.session.CANAccount,
+  };
+}
+
+app.get('/', (req, res) => res.render('index', mapSession(req)));
+app.get('/check-balance', (req, res) => res.render('checkBalance', mapSession(req)));
+app.get('/transfer-history', (req, res) => res.render('transferHistory', mapSession(req)));
 
 // CANpass integration
 const client_id = 'ba1f6c8c4e30deba32ab1c415029e5db'; // Replace YOUR_CLIENT_ID here
@@ -47,7 +52,12 @@ app.get('/auth/cryptobadge/callback', (req, res) => {
   ).then((token) => {
     console.log('-- retrieve token:', token);
     req.session.token = token;
-    res.redirect('/');
+
+    // get CAN-account and put to session
+    me(token.access_token).then((CANAccount) => {
+      req.session.CANAccount = CANAccount;
+      res.redirect('/');
+    });
   });
 });
 
@@ -102,6 +112,7 @@ app.post('/transferCat', (req, res) => {
       },
     },
   };
+
   makePromise(execute(link, operation))
     .then((data) => {
       //response a redirect url where user can sign transaction
@@ -113,7 +124,9 @@ app.post('/transferCat', (req, res) => {
     });
 });
 
-app.get('/getMyCanAccount', (req, res) => {
+function me(access_token) {
+  console.info(`Query CAN account using access token:`, access_token);
+
   const operation = {
     query: gql`
       query {
@@ -124,14 +137,13 @@ app.get('/getMyCanAccount', (req, res) => {
     `,
     context: {
       headers: {
-        Authorization: `Bearer ${req.session.token.access_token}`,
+        Authorization: `Bearer ${access_token}`,
       },
     },
   };
-  makePromise(execute(linkCB, operation)).then((data) => {
-    res.json(data.data.me.canAccounts[0]);
-  });
-});
+
+  return makePromise(execute(linkCB, operation)).then((data) => data.data.me.canAccounts[0]);
+}
 
 app.listen(PORT, () => {
   console.info(`application is ready on: http://localhost:${PORT}`);
