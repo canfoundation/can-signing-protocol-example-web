@@ -3,7 +3,6 @@
 <html>
   <head>
     <title>Transfer History</title>
-
     <% include components/head-common.ejs %> <% include components/head-highlight-code.ejs %>
   </head>
 
@@ -17,7 +16,13 @@
         <form class="col m9">
           <div class="row">
             <div class="input-field col m4">
-              <input placeholder="CAN Account " id="account" type="text" class="validate" />
+              <input
+                placeholder="CAN Account "
+                id="account"
+                type="text"
+                class="validate"
+                value="<%= CANAccount %>"
+              />
               <label for="account">CAN Account </label>
             </div>
 
@@ -91,13 +96,6 @@
       const inputCodeEl = document.getElementById('code');
       const inputSymbolEl = document.getElementById('symbol');
       const tableEl = document.getElementById('transfer-history-table');
-
-      /**
-       * get current user's CAN account
-       */
-      function getMyCanAccount() {
-        return fetch('/getMyCanAccount').then((res) => res.json());
-      }
 
       function handleQueryTransferHistory() {
         const account = document.getElementById('account').value;
@@ -201,9 +199,6 @@
 
     <script>
       (() => {
-        // set default account to current login user
-        getMyCanAccount().then((a) => (inputAccountEl.value = a));
-
         // init table
         initTable();
 

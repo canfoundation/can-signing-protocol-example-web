@@ -22,7 +22,7 @@
             <form>
               <div class="row">
                 <div class="input-field">
-                  <input placeholder="Your CAN Account" id="account-check-balance" type="text">
+                  <input placeholder="Your CAN Account" id="account-check-balance" type="text" value="<%= CANAccount %>">
                   <label for="account-check-balance">Your CAN Account</label>
                 </div>
               </div>
@@ -79,34 +79,16 @@
   </script>
 
   <script>
-    let inputAccountEl;
-    let displayBalanceEl;
+    const inputAccountEl = document.getElementById('account-check-balance');
+    const displayBalanceEl = document.getElementById('account-balance');
 
     (() => {
-      // set account ref
-      inputAccountEl = document.getElementById('account-check-balance');
-
-      // set display balance el
-      displayBalanceEl = document.getElementById('account-balance');
-
-      // field default CAN account to the current login user
-      getMyCanAccount().then(canAccount => {
-        inputAccountEl.value = canAccount;
-      });
-
       // display sample snippet
       document.getElementById('id-display-sample-snippet').innerText = document.getElementById('id-snippet-query-balance').innerText;
       
       // format code
       hljs.initHighlightingOnLoad();
     })();
-    
-    /**
-     * get current user's CAN account
-     */
-    function getMyCanAccount() {
-      return fetch('/getMyCanAccount').then(res => res.json());
-    }
 
     function checkBalance() {
       const CANAccount = inputAccountEl.value;
