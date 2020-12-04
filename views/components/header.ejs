@@ -1,0 +1,15 @@
+<% if (!token) { %>
+<div class="row">
+  <div class="col s12">
+    <div class="right-align">
+      <button
+        class="can-pass-login-button"
+        data-redirect-uri="http://localhost:3002/auth/cryptobadge/callback"
+        data-state="random string"
+        data-domain="https://canpass.me"
+        data-text="Sign in with can-pass"
+      ></button>
+    </div>
+  </div>
+</div>
+<% } else { %> <% include nav.ejs %> <% } %>
