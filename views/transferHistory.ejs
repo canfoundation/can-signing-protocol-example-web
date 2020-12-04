@@ -1,126 +1,220 @@
 <!DOCTYPE html>
 
 <html>
+  <head>
+    <title>Transfer History</title>
 
-<head>
-  <title>Transfer History</title>
-  
-  <% include components/head-common.ejs %>
+    <% include components/head-common.ejs %> <% include components/head-highlight-code.ejs %>
+  </head>
 
-  <style>
-    .card-container {
-      position: absolute;
-    }
+  <body>
+    <% include components/header.ejs %>
 
-    input {
-      color: white;
-    }
+    <div class="container">
+      <br />
+      <% if (token) { %>
+      <div class="row">
+        <form class="col m9">
+          <div class="row">
+            <div class="input-field col m4">
+              <input placeholder="CAN Account " id="account" type="text" class="validate" />
+              <label for="account">CAN Account </label>
+            </div>
 
-    .history-container {
-      padding: 4px 4px 19px 16px;
-      position: relative;
-      height: 300px;
-      overflow-y: auto;
-    }
-  </style>
-</head>
+            <div class="input-field col m4">
+              <input id="code" type="text" class="validate" value="eosio.token" />
+              <label for="code">Code</label>
+            </div>
 
-<body>
-  <% include components/header.ejs %>
-
-  <div class="container">
-    <% if (token) { %>
-    <div class="row">
-      <div class="col s12">
-        <div class="card grey darken-3">
-          <div class="card-content white-text">
-            <span class="card-title">Transfer History</span>
-            <form class="col s12">
-              <div class="row">
-                <div class="input-field col s4">
-                  <input placeholder="CAN Account " id="account" type="text" class="validate">
-                  <label for="account">CAN Account </label>
-                </div>
-                <div class="input-field col s4">
-                  <input id="code" type="text" class="validate" value="eosio.token">
-                  <label for="code">Code</label>
-                </div>
-                <div class="input-field col s4">
-                  <input id="symbol" type="text" class="validate" value="CAT">
-                  <label for="symbol">Symbol</label>
-                </div>
-              </div>
-            </form>
-            <div class="row">
-              <div class="col s12 right-align">
-                <button class="btn waves-effect waves-light" type="button" onclick="getTransferHistory()">Get
-                  History</button>
-              </div>
-              <div class="row history-container">
-                <table class="striped" id="tranferTable">
-                  <thead>
-                    <tr>
-                      <th>No</th>
-                      <th>Sender</th>
-                      <th>Receiver</th>
-                      <th>Amount</th>
-                      <th>Date</th>
-                    </tr>
-                  </thead>
-                  <tbody id="body-history">
-                    <tr></tr>
-                  </tbody>
-                </table>
-              </div>
+            <div class="input-field col m4">
+              <input id="symbol" type="text" class="validate" value="CAT" />
+              <label for="symbol">Symbol</label>
             </div>
           </div>
+        </form>
+
+        <div class="col m3">
+          <button
+            class="btn waves-effect waves-light"
+            type="button"
+            onclick="handleQueryTransferHistory()"
+          >
+            Query History
+          </button>
         </div>
       </div>
+
+      <div class="row">
+        <table class="responsive-table striped highlight" id="transfer-history-table"></table>
+      </div>
       <% } %>
+
+      <div class="row">
+        <a
+          href="https://explorer.canfoundation.io/v2/docs/index.html#/history/get_v2_history_get_transfer"
+          target="_blank"
+        >
+          API spec
+        </a>
+        <div class="col s12"><% include components/id-display-sample-snippet.ejs %></div>
+      </div>
     </div>
 
-    <script>
-      getMyCanAccount();
-      async function getMyCanAccount() {
-        const myCanAccountResponse = await fetch('http://localhost:3002/getMyCanAccount', {
-          method: 'GET',
-        })
-        const canAccount = await myCanAccountResponse.json();
-        document.getElementById('account').value = canAccount;
-      }
-      async function getTransferHistory() {
-        const account = document.getElementById('account').value;
-        const code = document.getElementById('code').value;
-        const symbol = document.getElementById('symbol').value;
-        const URLParams = account ? new URLSearchParams({ code, symbol, account }) : new URLSearchParams({ code, symbol });
-        const response = await fetch('https://explorer.canfoundation.io/v2/history/get_transfer?' + URLParams);
-        const body = await response.json();
-        addHistoryToTable(body.simple_actions);
-      }
+    <script id="query-transfer-history">
+      /**
+       * API spec:
+       * https://explorer.canfoundation.io/v2/docs/index.html#/history/get_v2_history_get_transfer
+       */
+      function queryTransferHistory({ account, code, symbol }) {
+        const urlSearchParams = new URLSearchParams();
 
-      function addHistoryToTable(historyData) {
-        const table = document.getElementById("tranferTable");
-        const body = document.getElementById('body-history');
-        const rows = body.rows.length;
-        for (let i = rows - 1; i > 0; i--) {
-          table.deleteRow(i);
+        if (account) {
+          urlSearchParams.append('account', account);
         }
-        historyData.forEach((history, index) => {
 
-          const row = table.insertRow(index + 1);
-          let cell0 = row.insertCell(0);
-          let cell1 = row.insertCell(1);
-          let cell2 = row.insertCell(2);
-          let cell3 = row.insertCell(3);
-          let cell4 = row.insertCell(4);
-          cell0.innerHTML = index;
-          cell1.innerHTML = history.data.from;
-          cell2.innerHTML = history.data.to;
-          cell3.innerHTML = history.data.amount;
-          cell4.innerHTML = new Date(history.timestamp);
-        });
+        if (code) {
+          urlSearchParams.append('code', code);
+        }
+
+        if (symbol) {
+          urlSearchParams.append('symbol', symbol);
+        }
+
+        return fetch(
+          `https://explorer.canfoundation.io/v2/history/get_transfer?${urlSearchParams.toString()}`,
+        ).then((res) => res.json());
       }
     </script>
-</body>
 
+    <script>
+      const inputAccountEl = document.getElementById('account');
+      const inputCodeEl = document.getElementById('code');
+      const inputSymbolEl = document.getElementById('symbol');
+      const tableEl = document.getElementById('transfer-history-table');
+
+      /**
+       * get current user's CAN account
+       */
+      function getMyCanAccount() {
+        return fetch('/getMyCanAccount').then((res) => res.json());
+      }
+
+      function handleQueryTransferHistory() {
+        const account = document.getElementById('account').value;
+        const code = inputCodeEl.value;
+        const symbol = inputSymbolEl.value;
+
+        queryTransferHistory({
+          account,
+          code,
+          symbol,
+        }).then((data) => updateHistoryTable(data.simple_actions));
+      }
+
+      const tHeadNames = {
+        Transaction: {
+          prop: 'transaction_id',
+          transform(v) {
+            const short = v.substr(0, 8);
+            // make a link to the explorer
+            return `<a target="_blank" href="https://explorer.canfoundation.io/v2/explore/transaction/${v}">${short}...</a>`;
+          },
+        },
+        Sender: 'data.from',
+        Receiver: 'data.to',
+        Quantity: {
+          prop: 'data.quantity',
+          width: '15%',
+        },
+        Timestamp: {
+          prop: 'timestamp',
+          width: '25%',
+        },
+        Memo: {
+          prop: 'data.memo',
+          width: '30%',
+        },
+      };
+
+      function initTable() {
+        const header = tableEl.createTHead();
+        const row = header.insertRow(0);
+        Object.keys(tHeadNames).forEach((k) => {
+          const th = document.createElement('th');
+          th.innerText = k;
+
+          const width = tHeadNames[k].width;
+          if (width) {
+            th.setAttribute('width', width);
+          }
+
+          row.appendChild(th);
+        });
+      }
+
+      function updateHistoryTable(simple_actions) {
+        const table = document.getElementById('transfer-history-table');
+        table.create;
+
+        // reset rows -- remove last tbody
+        const tbody = document.getElementsByTagName('tbody')[0];
+        if (tbody) {
+          table.removeChild(tbody);
+        }
+
+        const bodyEl = document.createElement('tbody');
+        table.appendChild(bodyEl);
+
+        // add rows
+        simple_actions.forEach((transfer, rowIdx) => {
+          const row = bodyEl.insertRow(rowIdx);
+
+          Object.keys(tHeadNames).forEach((k, i) => {
+            const cell = row.insertCell(i);
+            cell.innerHTML = get(transfer, tHeadNames[k]);
+          });
+        });
+      }
+
+      function get(obj, key) {
+        let transform;
+
+        if (typeof key == 'object') {
+          transform = key.transform;
+          key = key.prop;
+        }
+
+        const keys = key.split('.');
+
+        let v = obj;
+        for (const k of keys) {
+          v = v[k];
+
+          if (typeof v !== 'object') {
+            break;
+          }
+        }
+
+        return typeof transform == 'function' ? transform(v) : v;
+      }
+    </script>
+
+    <script>
+      (() => {
+        // set default account to current login user
+        getMyCanAccount().then((a) => (inputAccountEl.value = a));
+
+        // init table
+        initTable();
+
+        // show formated code snippet
+        document.getElementById('id-display-sample-snippet').innerText = document.getElementById(
+          'query-transfer-history',
+        ).innerText;
+
+        // format code
+        hljs.initHighlightingOnLoad();
+      })();
+    </script>
+  </body>
 </html>
