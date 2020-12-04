@@ -20,7 +20,9 @@ app.use(express.static('lib'));
 
 app.get('/', (req, res) => res.render('index', { token: req.session.token }));
 app.get('/check-balance', (req, res) => res.render('checkBalance', { token: req.session.token }));
-app.get('/tranfer-history', (req, res) => res.render('transferHistory', { token: req.session.token }));
+app.get('/transfer-history', (req, res) =>
+  res.render('transferHistory', { token: req.session.token }),
+);
 
 // CANpass integration
 const client_id = 'ba1f6c8c4e30deba32ab1c415029e5db'; // Replace YOUR_CLIENT_ID here
@@ -51,7 +53,7 @@ app.get('/auth/cryptobadge/callback', (req, res) => {
 
 app.get('/sign-tx-callback', (req, res) => {
   const trx = req.query.trx;
-  if(trx) {
+  if (trx) {
     console.log('Sign Transaction Success!');
     res.redirect('/');
   }
@@ -63,10 +65,10 @@ app.get('/logout', (req, res) => {
 });
 
 /**
-  * Transfer CAT by call can-keys API to get redirect link to sign transaction
-  * Receive {from, to , quantity} from client side
-  * redirectUrl is where you go back when you signed a transaction
-*/
+ * Transfer CAT by call can-keys API to get redirect link to sign transaction
+ * Receive {from, to , quantity} from client side
+ * redirectUrl is where you go back when you signed a transaction
+ */
 app.post('/transferCat', (req, res) => {
   const { from, to, quantity, redirectUrl } = req.body;
   const operation = {
@@ -94,22 +96,23 @@ app.post('/transferCat', (req, res) => {
         }
       }
     `,
-    context: { 
+    context: {
       headers: {
-          "Authorization": `Bearer ${req.session.token.access_token}`
-      }
+        Authorization: `Bearer ${req.session.token.access_token}`,
+      },
     },
   };
   makePromise(execute(link, operation))
-    .then(data => {
+    .then((data) => {
       //response a redirect url where user can sign transaction
       res.json(data.data.requestSignTransaction.headerLocation);
-  }).catch(error => {
-      console.log(`received error ${JSON.stringify(error, null, 2)}`)
+    })
+    .catch((error) => {
+      console.log(`received error ${JSON.stringify(error, null, 2)}`);
       res.json(JSON.stringify(error, null, 2));
-  })
-  
-})
+    });
+});
+
 app.get('/getMyCanAccount', (req, res) => {
   const operation = {
     query: gql`
@@ -119,19 +122,20 @@ app.get('/getMyCanAccount', (req, res) => {
         }
       }
     `,
-    context: { 
+    context: {
       headers: {
-          "Authorization": `Bearer ${req.session.token.access_token}`
-      }
+        Authorization: `Bearer ${req.session.token.access_token}`,
+      },
     },
   };
   makePromise(execute(linkCB, operation))
-    .then(data => {
+    .then((data) => {
       res.json(data.data.me.canAccounts[0]);
-  }).catch(error => {
+    })
+    .catch((error) => {
       res.json(JSON.stringify(error, null, 2));
-  })
-})
+    });
+});
 
 app.listen(PORT, () => {
   console.info(`application is ready on: http://localhost:${PORT}`);
