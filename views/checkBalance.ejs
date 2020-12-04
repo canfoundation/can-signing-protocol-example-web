@@ -4,31 +4,14 @@
 
 <head>
   <title>Check Balance</title>
-
-  <meta charset="utf-8" />
-  <meta name="viewport" content="minimum-scale=1, initial-scale=1, width=device-width" />
-
-  <!-- Compiled and minified CSS -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css" />
-
-  <!-- Compiled and minified JavaScript -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+  <% include components/head-common.ejs %>
+  <% include components/head-highlight-code.ejs %>
 </head>
 
 <body>
-  <div class="container">
-    <div class="row">
-      <div class="col s12">
-        <div class="right-align">
-          <% if (!token) { %>
-          Not found, return to <a href="/">HomePage</a>
-          <% } else { %>
-          <a href="/logout">Logout</a>
-          <% } %>
-        </div>
-      </div>
-    </div>
+  <% include components/header.ejs %>
 
+  <div class="container">
     <% if (token) { %>
     <div class="row">
       <div class="col s3"></div>
@@ -46,7 +29,10 @@
               <div class="row">
                 <div class="col s6">
                   Account Balance:
+
+                  <!-- Display of balance -->
                   <span id="account-balance"></span>
+
                 </div>
                 <div class="col s6">
                   <button class="btn waves-effect waves-light" type="button" onclick="checkBalance()">Check</button>
@@ -59,30 +45,74 @@
       <div class="col s3"></div>
     </div>
     <% } %>
+
+    <div class="row">
+      <div class="col">
+        <% include components/id-display-sample-snippet.ejs %>
+      </div>
+    </div>
   </div>
 
-  <script>
-    getMyCanAccount();
-    async function getMyCanAccount() {
-      const myCanAccountResponse = await fetch('http://localhost:3002/getMyCanAccount', {
-        method: 'GET',
-      })
-      const canAccount = await myCanAccountResponse.json();
-      document.getElementById('account-check-balance').value = canAccount;
-    }
-    async function checkBalance() {
-      const account = document.getElementById('account-check-balance').value;
-      const info = JSON.stringify({ "code": "eosio.token", "account": account, "symbol": "CAT" });
-      const response = await fetch('https://api.canfoundation.io/v1/chain/get_currency_balance', {
+  <script id="id-snippet-query-balance">
+    function queryBalance(account) {
+      /**
+       * Get balance information from blockchain network
+       */
+      return fetch('https://explorer.canfoundation.io/v1/chain/get_currency_balance', {
         method: 'POST',
-        body: info
+        body: JSON.stringify({
+          code: "eosio.token",
+          account,
+          symbol: 'CAT',
+        }),
+      })
+        .then(res => res.json())
+        .then(balance => {
+          if (balance[0]) {
+            return balance[0];
+          }
+          
+          alert("Not found!");
+          return '';
+        });
+    }
+  </script>
+
+  <script>
+    let inputAccountEl;
+    let displayBalanceEl;
+
+    (() => {
+      // set account ref
+      inputAccountEl = document.getElementById('account-check-balance');
+
+      // set display balance el
+      displayBalanceEl = document.getElementById('account-balance');
+
+      // field default CAN account to the current login user
+      getMyCanAccount().then(canAccount => {
+        inputAccountEl.value = canAccount;
       });
-      const balance = await response.json();
-      if (balance[0]) {
-        document.getElementById('account-balance').innerText = balance[0];
-      } else {
-        alert("Not found!");
-      }
+
+      // display sample snippet
+      document.getElementById('id-display-sample-snippet').innerText = document.getElementById('id-snippet-query-balance').innerText;
+      
+      // format code
+      hljs.initHighlightingOnLoad();
+    })();
+    
+    /**
+     * get current user's CAN account
+     */
+    function getMyCanAccount() {
+      return fetch('/getMyCanAccount').then(res => res.json());
+    }
+
+    function checkBalance() {
+      const CANAccount = inputAccountEl.value;
+      queryBalance(CANAccount).then(b => {
+        displayBalanceEl.innerText = b;
+      });
     }
   </script>
 </body>

@@ -128,13 +128,9 @@ app.get('/getMyCanAccount', (req, res) => {
       },
     },
   };
-  makePromise(execute(linkCB, operation))
-    .then((data) => {
-      res.json(data.data.me.canAccounts[0]);
-    })
-    .catch((error) => {
-      res.json(JSON.stringify(error, null, 2));
-    });
+  makePromise(execute(linkCB, operation)).then((data) => {
+    res.json(data.data.me.canAccounts[0]);
+  });
 });
 
 app.listen(PORT, () => {
