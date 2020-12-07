@@ -59,7 +59,7 @@ token = {
 ```
 The home page will show when you login success
 
-In Home page you will see a form Transfer CAT Example
+### Home page - Transfer CAT Example (http://localhost:3002/)
 
 - Input your CAN account
 - Input CAN account's receiver
@@ -111,6 +111,20 @@ app.get('/sign-tx-callback', (req, res) => {
 });
 ```
 You can get transaction info in ```req.query```
+
+### Check balance tab (http://localhost:3002/check-balance)
+
+- Input an CAN account (auto fill your CAN account)
+- Click Check button to get current balance (`code: eosio.token`, `symbol: CAT`) of your input account
+- The code example in UI
+
+### Transfer History tab (http://localhost:3002/transfer-history)
+
+- Input CAN account, Code, Symbol (example `CAN Account: ibyumaaj4gtk`, `Code: eosio.token`, `Symbol: CAT`)
+- Click on Query history
+- The table will show 10 transaction of user `ibyumaaj4gtk` with the `CAT` token
+- If CAN account field empty, The table will show 10 transaction of the given token you input
+- Code query example in UI
 
 
 
